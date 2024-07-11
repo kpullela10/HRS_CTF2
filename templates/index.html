@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        font-family: "Roboto", sans-serif;
+        background: linear-gradient(-45deg, #d3f0fb, #cef6ec, #f7cdc1, #facedf);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+      }
+
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      #background {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+      }
+
+      .digit {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.5);
+        font-family: "Courier New", monospace;
+        font-size: 60px;
+        font-weight: bold;
+      }
+
+      .content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        position: relative;
+        z-index: 1;
+      }
+
+      .centered-content {
+        background-color: #1d614f;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        max-width: 300px;
+      }
+
+      a {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 3.2em;
+        margin: 10px;
+        transition: color 0.3s;
+      }
+
+      a:hover {
+        color: #ffd700;
+      }
+
+      p {
+        margin: 5px 0;
+      }
+
+      #welcome {
+        font-size: 3.2em;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="background"></div>
+
+    <div class="content">
+      <div class="centered-content">
+        {% if username %}
+        <p id="welcome">Welcome, {{username}}!</p>
+        <p id="welcome">Points: {{points}}</p>
+        <br />
+        <br />
+        <a href="/signout">Sign Out</a>
+        <br />
+        {% else %}
+        <p><a href="/signin">Sign In</a></p>
+        <p><a href="/signup.html">Sign Up</a></p>
+        {% endif %}
+        <p><a href="/gym">Gym</a></p>
+        <p><a href="/leaderboard">Leaderboard</a></p>
+      </div>
+    </div>
+  </body>
+</html>

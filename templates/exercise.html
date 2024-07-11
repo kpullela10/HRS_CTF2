@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>X: {{exercise.name}}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background: linear-gradient(-45deg, #23a6d5, #23d5ab, #ee7752, #e73c7e);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        padding: 20px;
+        color: #fff;
+      }
+
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .exercise-content {
+        background-color: white;
+        color: black;
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(92, 80, 80, 0.2);
+      }
+
+      .exercise-title {
+        color: #333;
+        text-align: center;
+      }
+
+      .exercise-points {
+        text-align: center;
+        color: #666;
+        font-size: 1.4em;
+        margin-bottom: 20px;
+      }
+
+      .exercise-section {
+        margin-bottom: 20px;
+      }
+
+      .hint {
+        display: none;
+        padding: 10px;
+        background-color: #eee;
+        border-radius: 5px;
+        margin: 10px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      input[type="submit"] {
+        background-color: #057c09;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.3s ease;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+
+      .hintwrapper {
+        display: block;
+      }
+
+      #confetti-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 9999;
+      }
+
+      .confetti-piece {
+        position: absolute;
+        width: 10px;
+        height: 15px;
+        background-color: #f0f;
+        opacity: 0.7;
+        animation: fall linear forwards;
+      }
+
+      @keyframes fall {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(500px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="confetti-container"></div>
+    <div class="exercise-content">
+      <h1 class="exercise-title">
+        <data id="ex_id" value="{{exercise.ex_id}}">{{ exercise.name }}</data>
+      </h1>
+      <div class="exercise-points">{{ exercise.points }} points</div>
+
+      <div class="exercise-section">
+        <p>{{ exercise.description|safe }}</p>
+      </div>
+      {% if exercise.hasContainer %}
+      <div>
+        <button id="containerButton">toggle exercise instance</button>
+        <p id="status"></p>
+      </div>
+      <script>
+        const handleButton = async () => {
+          // turn off button until fetch complete
+          let button = document.getElementById("containerButton");
+          button.onclick = null;
+          let res = await fetch("/request_container", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ ex_id: {{exercise.ex_id}} }),
+          });
+          let json = await res.json();
+          let ptag = document.getElementById("status");
+          if ((await res.status) == 400) ptag.innerHTML = json.error;
+          else ptag.innerHTML = json.success;
+          document.getElementById("containerButton").onclick = handleButton;
+        };
+        window.onload = document.getElementById("containerButton").onclick =
+          handleButton;
+      </script>
+      {% endif %}
+      <form class="exercise-section" action="">
+        {% for hint in exercise.hints %}
+        <div class="hintwrapper">
+          <input
+            type="checkbox"
+            class="hint_option"
+            id="hint_option{{ loop.index }}"
+          />
+          <label for="hint_option{{ loop.index }}">hint {{ loop.index }}</label>
+          <div class="hint" id="hint{{ loop.index }}">{{ hint |safe }}</div>
+        </div>
+        {% endfor %}
+      </form>
+
+      <form action="" class="exercise-section" id="flagform">
+        <label for="flag_input">enter your flag</label>
+        <input
+          type="text"
+          name="flag_input"
+          id="flag"
+          placeholder="hrsCTF{..}"
+          required
+        />
+        <input type="submit" value="submit" />
+      </form>
+      <p><a href="/gym">Return to Gym</a></p>
+    </div>
+    <script>
+      window.onload = () => {
+        document
+          .getElementById("flagform")
+          .addEventListener("submit", async (e) => {
+            // prevent submission
+            e.preventDefault();
+            // authenticate flag with server
+            let res = await fetch("/flag", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                flag: document.getElementById("flag").value,
+                ex_id: document.getElementById("ex_id").value,
+              }),
+            });
+            if ((await res.status) == 200) {
+              // correct, so trigger confetti animation
+              triggerConfetti();
+            } else {
+              // wrong or error, so alert server message
+              let msg = await res.json();
+              alert(msg["error"]);
+            }
+          });
+      };
+      const hintCheckboxes = document.querySelectorAll(".hint_option");
+      hintCheckboxes.forEach((checkbox, index) => {
+        checkbox.addEventListener("change", () => {
+          const hintDiv = document.getElementById(`hint${index + 1}`);
+          if (checkbox.checked) {
+            // show hint
+            hintDiv.style.display = "block";
+          } else {
+            // hide hint
+            hintDiv.style.display = "none";
+          }
+        });
+      });
+      /**
+       * Creates and styles a single piece of confetti, then appends it to the confetti container.
+       * The confetti piece's position, color, rotation, and animation duration are set randomly.
+       * The piece of confetti is automatically removed after its fall animation ends.
+       *
+       * @param {number} x - The x-coordinate for the confetti piece, determining where it spawns horizontally.
+       */
+
+      function createConfettiPiece(x) {
+        const confettiPiece = document.createElement("div");
+        confettiPiece.classList.add("confetti-piece");
+        confettiPiece.style.left = `${x}px`;
+        confettiPiece.style.top = `${Math.random() * 400 - 200}px`; // random y position from -200 to 200
+        confettiPiece.style.backgroundColor =
+          "#" + Math.floor(Math.random() * 16777215).toString(16); // random color
+        confettiPiece.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+        // randomize anim duration for different falling speeds
+        const animationDuration = Math.random() * 3 + 2; // 2 to 5 seconds
+        confettiPiece.style.animation = `fall ${animationDuration}s linear forwards`;
+
+        document
+          .getElementById("confetti-container")
+          .appendChild(confettiPiece);
+
+        // remove confetti piece after anim ends
+        confettiPiece.addEventListener("animationend", () => {
+          confettiPiece.remove();
+        });
+      }
+      /**
+       * Triggers the confetti effect by creating multiple confetti pieces.
+       * The function calculates the width of the confetti container and then spawns
+       * a specified number of confetti pieces across the container's width.
+       */
+      function triggerConfetti() {
+        const confettiContainer = document.getElementById("confetti-container");
+        const width = confettiContainer.offsetWidth;
+        for (let i = 0; i < 100; i++) {
+          createConfettiPiece(Math.random() * width);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "SQL Injection",
+  "description": "Can you hack <a href='/file_request/5/app.py'>this app?</a>",
+  "points": 60,
+  "hints": [
+    "What's scary about this line? cursor.execute(request.form[\"query\"])"
+  ],
+  "hasContainer": true,
+  "imageName": "sql-exercise",
+  "imageTag": "latest",
+  "imagePort": "2800",
+  "flag": "hrsCTF{1nject10n}"
+}
