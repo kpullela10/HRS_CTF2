@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index</title>
+    <title>HRS_CTF - Home</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -14,14 +14,53 @@
         margin: 0;
         padding: 0;
         height: 100%;
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+        color: #e2e8f0;
         overflow: hidden;
-        font-family: "Roboto", sans-serif;
-        background: linear-gradient(-45deg, #d3f0fb, #cef6ec, #f7cdc1, #facedf);
-        background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
       }
-
-      @keyframes gradientBG {
+      #background {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+      }
+      .digit {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.1);
+        font-family: "Courier New", monospace;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        position: relative;
+        z-index: 1;
+      }
+      .centered-content {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 3rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #4ade80, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 5s ease infinite;
+      }
+      @keyframes gradientShift {
         0% {
           background-position: 0% 50%;
         }
@@ -32,60 +71,41 @@
           background-position: 0% 50%;
         }
       }
-
-      #background {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: -1;
+      .welcome-text {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #4ade80;
       }
-
-      .digit {
-        position: absolute;
-        color: rgba(255, 255, 255, 0.5);
-        font-family: "Courier New", monospace;
-        font-size: 60px;
-        font-weight: bold;
+      .points {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+        color: #00ffaa;
       }
-
-      .content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        position: relative;
-        z-index: 1;
-      }
-
-      .centered-content {
-        background-color: #1d614f;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        max-width: 300px;
-      }
-
-      a {
-        color: #ffffff;
+      .nav-link {
+        display: inline-block;
+        background: linear-gradient(to right, #4ade80, #3b82f6);
+        color: #0f172a;
         text-decoration: none;
-        font-size: 3.2em;
-        margin: 10px;
-        transition: color 0.3s;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        margin: 0.5rem;
+        transition: opacity 0.3s ease, transform 0.3s ease;
       }
-
-      a:hover {
-        color: #ffd700;
+      .nav-link:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
       }
-
-      p {
-        margin: 5px 0;
-      }
-
-      #welcome {
-        font-size: 3.2em;
-        color: white;
+      @media (max-width: 640px) {
+        .centered-content {
+          padding: 2rem;
+        }
+        h1 {
+          font-size: 2rem;
+        }
+        .nav-link {
+          padding: 0.5rem 1rem;
+        }
       }
     </style>
   </head>
@@ -94,20 +114,50 @@
 
     <div class="content">
       <div class="centered-content">
+        <h1>Head-Royce Capture the Flag</h1>
         {% if username %}
-        <p id="welcome">Welcome, {{username}}!</p>
-        <p id="welcome">Points: {{points}}</p>
-        <br />
-        <br />
-        <a href="/signout">Sign Out</a>
-        <br />
+        <p class="welcome-text">Welcome, {{ username }}!</p>
+        <p class="points">Points: {{ points }}</p>
+        <a href="/gym" class="nav-link">Gym</a>
+        <a href="/leaderboard" class="nav-link">Leaderboard</a>
+        <a href="/signout" class="nav-link">Sign Out</a>
         {% else %}
-        <p><a href="/signin">Sign In</a></p>
-        <p><a href="/signup.html">Sign Up</a></p>
+        <a href="/signin" class="nav-link">Sign In</a>
+        <a href="/signup" class="nav-link">Sign Up</a>
+        <a href="/gym" class="nav-link">Gym</a>
+        <a href="/leaderboard" class="nav-link">Leaderboard</a>
         {% endif %}
-        <p><a href="/gym">Gym</a></p>
-        <p><a href="/leaderboard">Leaderboard</a></p>
       </div>
     </div>
+
+    <script>
+      function createDigit() {
+        const digit = document.createElement("div");
+        digit.classList.add("digit");
+        digit.style.left = `${Math.random() * 100}vw`;
+        digit.style.top = `${Math.random() * 100}vh`;
+        digit.textContent = Math.floor(Math.random() * 2);
+        document.getElementById("background").appendChild(digit);
+
+        setTimeout(() => {
+          digit.remove();
+        }, 10000);
+      }
+
+      setInterval(createDigit, 100);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const links = document.querySelectorAll(".nav-link");
+        links.forEach((link, index) => {
+          link.style.opacity = "0";
+          link.style.transform = "translateY(20px)";
+          setTimeout(() => {
+            link.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+            link.style.opacity = "1";
+            link.style.transform = "translateY(0)";
+          }, index * 100);
+        });
+      });
+    </script>
   </body>
 </html>

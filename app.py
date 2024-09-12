@@ -399,7 +399,10 @@ def submit_flag():
         ex_dict = json.load(ex_file)
 
     if ex_dict["flag"] == request.json["flag"]:
+        print(ex_dict["flag"])
+        print(request.json["flag"])
         if handle_completed_ex(ex_id, user_id):
+            
             return jsonify({"success": "Flag correct!"}), 200
         else:
             return jsonify({"error": "Exercise already completed!"}), 400

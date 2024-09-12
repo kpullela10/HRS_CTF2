@@ -1,61 +1,120 @@
-body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(-45deg, #d3f0fb, #cef6ec, #f7cdc1, #facedf);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+body, html {
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+    color: #e2e8f0;
+    overflow: hidden;
 }
 
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+#background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.digit {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.1);
+    font-family: 'Courier New', monospace;
+    font-size: 24px;
+    font-weight: bold;
+    animation: fall 10s linear forwards;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-100vh); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
 }
 
 .content-container {
-    background-color: #1D614F;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.content-container {
+    background-color: rgba(30, 41, 59, 0.8);
+    padding: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
-    max-width: 300px;
+    max-width: 400px;
+    width: 90%;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, #4ade80, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+form {
+    width: 100%;
 }
 
 input[type="text"],
 input[type="password"] {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-sizing: border-box;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid #4a5568;
+    border-radius: 0.25rem;
+    background-color: #2d3748;
+    color: #e2e8f0;
+    font-size: 1rem;
 }
 
-input[type="submit"] {
+button[type="submit"] {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    background-color: #BCFFD3;
-    color: #1D614F;
+    padding: 0.75rem;
+    margin: 1rem 0;
+    background: linear-gradient(to right, #4ade80, #3b82f6);
+    color: #0f172a;
     border: none;
-    border-radius: 5px;
+    border-radius: 0.25rem;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: opacity 0.3s ease;
 }
 
-input[type="submit"]:hover {
-    background-color: #A0D9B5;
+button[type="submit"]:hover {
+    opacity: 0.9;
 }
 
 p {
-    color: #fffefb;
+    margin-top: 1rem;
+    color: #94a3b8;
 }
 
 a {
-    color: #FFD700;
+    color: #4ade80;
     text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #3b82f6;
+}
+
+@media (max-width: 640px) {
+    .content-container {
+        padding: 2rem;
+    }
 }
